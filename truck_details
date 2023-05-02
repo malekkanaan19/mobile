@@ -1,0 +1,86 @@
+import 'package:flutter/material.dart';
+
+class TruckDetails extends StatefulWidget {
+  final String truckSize;
+
+  TruckDetails({required this.truckSize});
+
+  @override
+  _TruckDetailsState createState() => _TruckDetailsState();
+}
+
+class _TruckDetailsState extends State<TruckDetails> {
+  bool _isConfirmed = false;
+
+  String getTruckDetails(String size) {
+    if (size == 'mid') {
+      return 'Minimum Weight: 1000 kg\nMaximum Weight: 3000 kg\nEstimated Items: 150\nEstimated Price: \$100';
+    } else if (size == 'L') {
+      return 'Minimum Weight: 3000 kg\nMaximum Weight: 6000 kg\nEstimated Items: 300\nEstimated Price: \$200';
+    } else {
+      return 'Minimum Weight: 6000 kg\nMaximum Weight: 12000 kg\nEstimated Items: 600\nEstimated Price: \$300';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.5,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Truck Size: ${widget.truckSize}',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                getTruckDetails(widget.truckSize),
+                style: TextStyle(fontSize: 18),
+              ),
+              if (_isConfirmed)
+                Text(
+                  'Your order was booked! Please wait 24hrs for confirmation.',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green),
+                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmed = true;
+                      });
+                    },
+                    child: Text('Confirm'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green,
+                    ),
+                  ),
+                  OutlinedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Decline'),
+                    style: OutlinedButton.styleFrom(
+                      primary: Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
