@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+import 'package:truck_go/main.dart'; // Import the LoginSignUpScreen
+
+class LogoutScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Handle logout logic here, e.g. clear user data, sign out from authentication service
+
+    // Navigate back to the login screen
+    Future.delayed(Duration.zero, () {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => LoginSignUpScreen()),
+        (Route<dynamic> route) => false,
+      );
+    });
+
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}
