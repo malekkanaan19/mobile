@@ -1,0 +1,204 @@
+import 'package:flutter/material.dart';
+import 'package:truck_go/list.dart';
+import 'package:truck_go/truck_list.dart';
+
+class MapScreen extends StatefulWidget {
+  @override
+  _MapScreenState createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  TextEditingController _pickupController = TextEditingController();
+  TextEditingController _dropoffController = TextEditingController();
+  bool _showPickupPin = false;
+  bool _showDropoffPin = false;
+  bool _showConfirmButtons = false;
+
+  void _onPickupLocationTap() {
+    setState(() {
+      _showPickupPin = true;
+    });
+  }
+
+  void _onDropoffLocationTap() {
+    setState(() {
+      _showDropoffPin = true;
+    });
+
+    if (_showPickupPin && _showDropoffPin) {
+      setState(() {
+        _showConfirmButtons = true;
+      });
+    }
+  }
+
+  void _navigateToTruckList() {
+    setState(() {
+      _showConfirmButtons = false;
+      _showPickupPin = false;
+      _showDropoffPin = false;
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TruckListScreen(),
+      ),
+    );
+  }
+
+  void _resetPins() {
+    setState(() {
+      _showPickupPin = false;
+      _showDropoffPin = false;
+      _showConfirmButtons = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: const CustomDrawer(),
+      body: Stack(
+        children: [
+          // Replace the following line with your map image.
+          Image.asset(
+            "assets/map image.jpg",
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+
+          if (_showPickupPin)
+            DraggablePin(
+              pinType: "pickup",
+            ),
+          if (_showDropoffPin)
+            DraggablePin(
+              pinType: "dropoff",
+            ),
+          Positioned(
+            left: 16,
+            top: 16,
+            child: Builder(
+              builder: (BuildContext context) {
+                return IconButton(
+                  icon: Icon(Icons.menu),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
+            ),
+          ),
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_showConfirmButtons) SizedBox(height: 16),
+                if (_showConfirmButtons)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _navigateToTruckList,
+                        child: Text(
+                          'Confirm Shipment',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(primary: Colors.green),
+                      ),
+                      SizedBox(width: 16),
+                      ElevatedButton(
+                        onPressed: _resetPins,
+                        child: Text(
+                          'Decline Shipment',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        style: ElevatedButton.styleFrom(primary: Colors.red),
+                      ),
+                    ],
+                  ),
+                SizedBox(height: 16),
+                Text(
+                  'Where to?',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 16),
+                GestureDetector(
+                  onTap: _onPickupLocationTap,
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: _pickupController,
+                      decoration: InputDecoration(
+                        labelText: 'Pick-up location',
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                GestureDetector(
+                  onTap: _onDropoffLocationTap,
+                  child: AbsorbPointer(
+                    child: TextField(
+                      controller: _dropoffController,
+                      decoration: InputDecoration(
+                        labelText: 'Drop-off location',
+                        fillColor: Colors.white,
+                        filled: true,
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class DraggablePin extends StatefulWidget {
+  final String pinType;
+
+  DraggablePin({required this.pinType});
+
+  @override
+  _DraggablePinState createState() => _DraggablePinState();
+}
+
+class _DraggablePinState extends State<DraggablePin> {
+  Offset position = Offset(100, 100);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: position.dx,
+      top: position.dy,
+      child: Draggable(
+        child: Icon(
+          Icons.location_on,
+          size: 48,
+          color: widget.pinType == "pickup" ? Colors.green : Colors.red,
+        ),
+        feedback: Icon(
+          Icons.location_on,
+          size: 48,
+          color: widget.pinType == "pickup" ? Colors.green : Colors.red,
+        ),
+        onDragEnd: (details) {
+          setState(() {
+            position = details.offset;
+          });
+        },
+      ),
+    );
+  }
+}
