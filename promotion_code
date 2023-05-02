@@ -1,0 +1,72 @@
+import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+
+class PromotionCodeScreen extends StatefulWidget {
+  @override
+  _PromotionCodeScreenState createState() => _PromotionCodeScreenState();
+}
+
+class _PromotionCodeScreenState extends State<PromotionCodeScreen> {
+  TextEditingController _promoCodeController = TextEditingController();
+  bool _codeClaimed = false;
+
+  void _claimPromoCode() {
+    setState(() {
+      _codeClaimed = true;
+    });
+    // Handle promo code logic here
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Promotion Code'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            _codeClaimed
+                ? SizedBox(
+                    width: 250.0,
+                    child: DefaultTextStyle(
+                      style: const TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green,
+                      ),
+                      child: AnimatedTextKit(
+                        animatedTexts: [
+                          WavyAnimatedText('Code Claimed!'),
+                        ],
+                        isRepeatingAnimation: false,
+                        onTap: () {
+                          print("Tap Event");
+                        },
+                      ),
+                    ),
+                  )
+                : Column(
+                    children: [
+                      TextField(
+                        controller: _promoCodeController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter promo code',
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _claimPromoCode,
+                        child: Text('Claim Promo Code'),
+                      ),
+                    ],
+                  ),
+          ],
+        ),
+      ),
+    );
+  }
+}
