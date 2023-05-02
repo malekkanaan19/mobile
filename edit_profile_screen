@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+
+class EditProfileScreen extends StatefulWidget {
+  @override
+  _EditProfileScreenState createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String _name = '';
+  String _email = '';
+  String _password = '';
+  String _paymentMethod = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: Text('Hello, ${_name.isEmpty ? 'User' : _name}'),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(16),
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              children: [
+                SizedBox(height: 16),
+                TextFormField(
+                  initialValue: _name,
+                  decoration: InputDecoration(labelText: 'Name'),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _name = value!,
+                ),
+                TextFormField(
+                  initialValue: _email,
+                  decoration: InputDecoration(labelText: 'Email'),
+                  keyboardType: TextInputType.emailAddress,
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        !value.contains('@')) {
+                      return 'Please enter a valid email';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _email = value!,
+                ),
+                TextFormField(
+                  initialValue: _password,
+                  decoration: InputDecoration(labelText: 'Password'),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty || value.length < 6) {
+                      return 'Password must be at least 6 characters long';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _password = value!,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Payment Method',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ListTile(
+                  title: const Text('Pay Cash'),
+                  leading: Radio<String>(
+                    value: 'cash',
+                    groupValue: _paymentMethod,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _paymentMethod = value!;
+                      });
+                    },
+                  ),
+                ),
+                ListTile(
+                  title: const Text('Credit Card'),
+                  leading: Radio<String>(
+                    value: 'creditCard',
+                    groupValue: _paymentMethod,
+                    onChanged: (String? value) {
+                      setState(() {
+                        _paymentMethod = value!;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Credit Card Information'),
+                              content: Text(
+                                  'Please update your credit card information in the settings section.'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) {
+                      return;
+                    }
+                    _formKey.currentState!.save();
+                    // Handle form submission and update user profile
+
+                    // Reset the text fields
+                    _formKey.currentState!.reset();
+                    // Display the updated name at the top
+                    setState(() {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Profile updated')),
+                      );
+                    });
+                  },
+                  child: Text('Update Profile'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
