@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+
+class HistoryScreen extends StatelessWidget {
+  final List<Ride> rides = [
+    Ride(
+        truckSize: 'Medium',
+        date: '01/12/2023',
+        pickup: 'Beirut, Lebanon',
+        dropOff: 'Tripoli, Lebanon'),
+    Ride(
+        truckSize: 'Large',
+        date: '23/11/2023',
+        pickup: 'Zahle, Lebanon',
+        dropOff: 'Sidon, Lebanon'),
+    Ride(
+        truckSize: 'Extra Large',
+        date: '15/11/2023',
+        pickup: 'Tyre, Lebanon',
+        dropOff: 'Byblos, Lebanon'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('History'),
+        backgroundColor: Colors.blue,
+      ),
+      body: ListView.builder(
+        itemCount: rides.length,
+        itemBuilder: (context, index) {
+          final ride = rides[index];
+          return Card(
+            margin: EdgeInsets.all(8),
+            child: ListTile(
+              title: Text(
+                '${ride.truckSize} Truck',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 8),
+                  Text('Date: ${ride.date}'),
+                  Text('Pickup: ${ride.pickup}'),
+                  Text('Drop-off: ${ride.dropOff}'),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class Ride {
+  final String truckSize;
+  final String date;
+  final String pickup;
+  final String dropOff;
+
+  Ride(
+      {required this.truckSize,
+      required this.date,
+      required this.pickup,
+      required this.dropOff});
+}
